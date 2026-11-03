@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Management System</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Student Management System</h1>
+
+  <div class="container">
+    <!-- Add / Edit form -->
+    <div class="card">
+      <h2 id="form-title">Add Student</h2>
+      <form id="student-form">
+        <input type="hidden" id="student-id">
+
+        <label>Name *</label>
+        <input id="name" required>
+
+        <label>Email *</label>
+        <input id="email" type="email" required>
+
+        <label>Phone</label>
+        <input id="phone">
+
+        <label>Course *</label>
+        <input id="course" required>
+
+        <label>Year *</label>
+        <select id="year" required>
+          <option value="">Select year</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+
+        <p id="form-error" class="error"></p>
+        <button type="submit" id="save-btn">Add Student</button>
+        <button type="button" id="cancel-btn" hidden>Cancel</button>
+      </form>
+    </div>
+
+    <!-- Student table -->
+    <div class="card">
+      <h2>Students</h2>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>Course</th><th>Year</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="student-rows"></tbody>
+      </table>
+
+      <!-- View details box -->
+      <div id="details" hidden></div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
