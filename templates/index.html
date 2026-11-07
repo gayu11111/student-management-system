@@ -4,59 +4,129 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>Student Management System</h1>
 
-  <div class="container">
-    <!-- Add / Edit form -->
-    <div class="card">
-      <h2 id="form-title">Add Student</h2>
-      <form id="student-form">
-        <input type="hidden" id="student-id">
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div>
+          <h1>Student Management System</h1>
+          <p id="hero-count" class="hero-count">Loading students…</p>
+        </div>
+        <button type="button" id="add-btn" class="btn btn-accent">Add student</button>
+      </div>
 
-        <label>Name *</label>
-        <input id="name" required>
+      <div id="year-bar" class="year-bar" role="img" aria-label="Students in each year"></div>
+      <div id="year-filters" class="year-filters" role="group" aria-label="Filter by year"></div>
+    </div>
+  </header>
 
-        <label>Email *</label>
-        <input id="email" type="email" required>
-
-        <label>Phone</label>
-        <input id="phone">
-
-        <label>Course *</label>
-        <input id="course" required>
-
-        <label>Year *</label>
-        <select id="year" required>
-          <option value="">Select year</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-        </select>
-
-        <p id="form-error" class="error"></p>
-        <button type="submit" id="save-btn">Add Student</button>
-        <button type="button" id="cancel-btn" hidden>Cancel</button>
-      </form>
+  <main class="main">
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Search by name, email or course" aria-label="Search students">
+      <select id="sort" aria-label="Sort students">
+        <option value="newest">Newest first</option>
+        <option value="name">Name A to Z</option>
+        <option value="year">Year</option>
+        <option value="course">Course</option>
+      </select>
+      <div class="seg" role="group" aria-label="Choose layout">
+        <button type="button" id="view-cards" aria-pressed="true">Cards</button>
+        <button type="button" id="view-table" aria-pressed="false">Table</button>
+      </div>
+      <button type="button" id="export-btn" class="btn">Export CSV</button>
     </div>
 
-    <!-- Student table -->
-    <div class="card">
-      <h2>Students</h2>
+    <p id="result-note" class="result-note" aria-live="polite"></p>
+
+    <section id="cards" class="cards" aria-label="Students"></section>
+
+    <div id="table-wrap" class="table-wrap" hidden>
       <table>
         <thead>
           <tr><th>ID</th><th>Name</th><th>Course</th><th>Year</th><th>Actions</th></tr>
         </thead>
         <tbody id="student-rows"></tbody>
       </table>
-
-      <!-- View details box -->
-      <div id="details" hidden></div>
     </div>
-  </div>
+
+    <div id="empty" class="empty" hidden></div>
+  </main>
+
+  <!-- Add / edit dialog -->
+  <dialog id="form-dialog" aria-labelledby="form-title">
+    <form id="student-form">
+      <h2 id="form-title">Add student</h2>
+      <input type="hidden" id="student-id">
+
+      <label for="name">Name</label>
+      <input id="name" placeholder="e.g. Gayathri R" required>
+
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="name@example.com" required>
+
+      <label for="phone">Phone (optional)</label>
+      <input id="phone" placeholder="e.g. 9876543210">
+
+      <label for="course">Course</label>
+      <input id="course" placeholder="e.g. B.Sc Computer Science" required>
+
+      <label for="year">Year</label>
+      <select id="year" required>
+        <option value="">Select year</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+      </select>
+
+      <p id="form-error" class="form-error" role="alert"></p>
+
+      <div class="dlg-actions">
+        <button type="button" id="cancel-btn" class="btn">Cancel</button>
+        <button type="submit" id="save-btn" class="btn btn-primary">Add student</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- View dialog -->
+  <dialog id="view-dialog" aria-labelledby="v-name">
+    <div class="dlg-head">
+      <span id="v-mono" class="monogram"></span>
+      <div>
+        <h2 id="v-name"></h2>
+        <p id="v-id" class="muted"></p>
+      </div>
+    </div>
+
+    <dl class="detail">
+      <dt>Email</dt><dd id="v-email"></dd>
+      <dt>Phone</dt><dd id="v-phone"></dd>
+      <dt>Course</dt><dd id="v-course"></dd>
+      <dt>Year</dt><dd id="v-year"></dd>
+    </dl>
+
+    <div id="v-actions" class="dlg-actions">
+      <button type="button" id="v-close" class="btn">Close</button>
+      <button type="button" id="v-delete" class="btn btn-danger">Delete</button>
+      <button type="button" id="v-edit" class="btn btn-primary">Edit</button>
+    </div>
+
+    <div id="v-confirm" class="confirm" hidden>
+      <p id="v-confirm-text"></p>
+      <div class="dlg-actions">
+        <button type="button" id="v-keep" class="btn">Keep student</button>
+        <button type="button" id="v-confirm-delete" class="btn btn-danger-solid">Delete student</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
 
   <script src="/static/app.js"></script>
 </body>
